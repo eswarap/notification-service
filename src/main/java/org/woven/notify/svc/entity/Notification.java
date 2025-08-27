@@ -1,4 +1,4 @@
-package org.woven.notification.demo.entity;
+package org.woven.notify.svc.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

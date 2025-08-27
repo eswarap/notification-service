@@ -1,4 +1,4 @@
-package org.woven.notification.demo.service;
+package org.woven.notify.svc.service;
 
 import lombok.extern.java.Log;
 import org.springframework.scheduling.TaskScheduler;
@@ -6,6 +6,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
@@ -13,6 +15,8 @@ import java.util.concurrent.ScheduledFuture;
 public class SchedulerService {
     private final TaskScheduler scheduler;
     private ScheduledFuture<?> future;
+    private final Queue<Runnable> pendingTasks = new ConcurrentLinkedQueue<>();
+
 
     public SchedulerService() {
         ThreadPoolTaskScheduler threadPool = new ThreadPoolTaskScheduler();
@@ -22,8 +26,23 @@ public class SchedulerService {
         this.scheduler = threadPool;
     }
 
-    public void startReminderTask(Runnable task, long delayMillis) {
-        future = scheduler.schedule(task, new Date(System.currentTimeMillis() + delayMillis));
+    public void addTaskToQueue(Runnable task) {
+        pendingTasks.offer(task);
+    }
+
+    private boolean hasPendingTasks() {
+        return !pendingTasks.isEmpty();
+    }
+
+
+    public void startReminderTask(long delayMillis) {
+        if (future == null || future.isCancelled()) {
+            if (hasPendingTasks()) {  Runnable task = pendingTasks.poll();
+                if (task != null) {
+                    future = scheduler.schedule(task, new Date(System.currentTimeMillis() + delayMillis).toInstant());
+                }
+            }
+        }
     }
 
     public void stopReminderTask() {
@@ -31,4 +50,5 @@ public class SchedulerService {
             future.cancel(false);
         }
     }
+
 }
