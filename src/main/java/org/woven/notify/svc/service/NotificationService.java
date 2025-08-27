@@ -1,9 +1,9 @@
-package org.woven.notification.demo.service;
+package org.woven.notify.svc.service;
 
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-import org.woven.notification.demo.entity.Notification;
-import org.woven.notification.demo.repository.NotificationRepository;
+import org.woven.notify.svc.entity.Notification;
+import org.woven.notify.svc.repository.NotificationRepository;
 
 import java.util.List;
 

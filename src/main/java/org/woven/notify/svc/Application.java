@@ -1,4 +1,4 @@
-package org.woven.notification.demo;
+package org.woven.notify.svc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
